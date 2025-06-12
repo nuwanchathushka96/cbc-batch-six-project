@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
         require :true,
         default : 0
     },
-    isAvailble : {
+    isAvailable : {
         type : Boolean,
         require : true
     },
