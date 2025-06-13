@@ -3,6 +3,7 @@ import Product from "../models/product.js";
 import { isAdmin } from "./userController.js";
 
 
+// create product funation start
 
 export async function createProduct(req , res){
 
@@ -38,8 +39,9 @@ export async function createProduct(req , res){
     }
     
 }
+// create product funation end
 
-// prodcut find function
+// prodcut find function start
 
 export async function getProduct(req , res){
 
@@ -57,3 +59,112 @@ export async function getProduct(req , res){
 }
 
 }
+// prodcut find function end
+
+// product delete function start
+
+export async function productDelete(req , res){
+    
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "product delete can admin only"
+        })
+        return;
+    }
+
+    try{
+         const productId = req.params.productId;
+         await product.deleteOne({productId : productId});
+        res.json({
+            message : "product Deleted Successfully"
+        })
+    }catch(error){
+        return res.status(580).json({
+                message : "Faild the product Create"
+            })
+    }
+   
+}
+
+// product delete function end
+
+
+// product Upadate function start
+
+export async function productUpdate(req , res){ 
+    
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "product delete can admin only"
+        })
+        return;
+    }
+    
+    const data = req.body;
+    const productId = req.params.productId;
+    data.productId = productId;
+
+    try{
+        await product.updateOne({productId : productId}, data);
+        res.json({
+            message : "update successfully"
+        })
+
+    }catch(error){
+
+         return res.status(580).json({
+                message : "Faild the product Create"
+            })
+
+    }
+
+}
+
+// product Upadate function end
+
+// get one product function start
+
+export async function getInformation(req,res){
+
+    try{
+
+    const productId = req.params.productId;
+    const products = await product.findOne({productId : productId})
+
+    if(products == null){
+        res.json({
+            message : "Product is not found"
+            
+        })
+        return;
+    }
+
+    if(isAdmin(req)){   
+
+        res.json(products);
+
+    }else{
+        if(product.isAvailable){
+            res.json(products);
+        }else{
+            res.status(404).json({
+            message : "Product is not found"
+            })
+        return;
+        }
+    }
+}catch(error){
+    return res.status(404).json({
+        
+                message : "Faild the product search"
+                
+                
+            }),
+            console.error("fgdfg ",error);
+}
+
+}
+
+
+
+// get one product function end
